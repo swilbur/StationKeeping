@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <double name="WindowX">500</double>
+    <double name="WindowY">500</double>
+    <bool name="RealSMA">0</bool>
+    <double name="Tolerance">0.01</double>
+</config>
