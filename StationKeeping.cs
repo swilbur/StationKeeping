@@ -74,7 +74,10 @@ namespace StationKeeping
 			v = mapObject.vessel;
 			CurrentSMA = v.orbit.semiMajorAxis;
 			CelestialBody c = mapObject.vessel.mainBody;
-			CurrentBodySynchronous = Math.Pow(Math.Sqrt(c.gravParameter) / c.angularV, 2.0/3.0);
+			if (c.angularV != 0)
+				CurrentBodySynchronous = Math.Pow (Math.Sqrt (c.gravParameter) / Math.Abs (c.angularV), 2.0 / 3.0);
+			else
+				CurrentBodySynchronous = Double.PositiveInfinity;
 			if (!RealSMA) {
 				CurrentSMA -= c.Radius;
 				CurrentBodySynchronous -= c.Radius;
@@ -111,7 +114,7 @@ namespace StationKeeping
 				Target += v.mainBody.Radius;
 
 			if (v.situation != Vessel.Situations.ORBITING) {
-				ScreenMessages.PostScreenMessage ("Cannot set station: " + v.name + " not in orbit.");
+				ScreenMessages.PostScreenMessage ("Cannot set station: " + v.vesselName + " not in orbit.");
 				return;
 			}
 
@@ -126,7 +129,7 @@ namespace StationKeeping
 			//double DeltaV = AdditionalE / vel.magnitude; // approximation
 
 			if (!ConsumeFuel (Math.Abs(DeltaV))) {
-				//ScreenMessages.PostScreenMessage ("Cannot set station: " + v.name + " has insufficient fuel.");
+				//ScreenMessages.PostScreenMessage ("Cannot set station: " + v.vesselName + " has insufficient fuel.");
 				return;
 			}
 
@@ -136,7 +139,7 @@ namespace StationKeeping
 
 			if (!RealSMA)
 				Target -= v.mainBody.Radius;
-			ScreenMessages.PostScreenMessage ("Setting orbit of " + v.name + " to " + FormatLength (Target) + ".");
+			ScreenMessages.PostScreenMessage ("Setting orbit of " + v.vesselName + " to " + FormatLength (Target) + ".");
 
 			OnMapTargetChange (v.mapObject);
 		}
@@ -150,7 +153,7 @@ namespace StationKeeping
 
 			if (!RealSMA)
 				Target -= v.mainBody.Radius;
-			ScreenMessages.PostScreenMessage ("Setting orbit of " + v.name + " to " + FormatLength(Target) + ".");
+			ScreenMessages.PostScreenMessage ("Setting orbit of " + v.vesselName + " to " + FormatLength(Target) + ".");
 
 			OnMapTargetChange (v.mapObject);*/
 
@@ -161,7 +164,7 @@ namespace StationKeeping
 			foreach (ProtoPartSnapshot pp in v.protoVessel.protoPartSnapshots) {
 				Part part = PartLoader.getPartInfoByName(pp.partName).partPrefab;
 				foreach(ModuleEngines e in part.FindModulesImplementing<ModuleEngines>()){
-					Debug.Log ("[StationKeeping] isp: " + e.atmosphereCurve.Evaluate(0));
+					//Debug.Log ("[StationKeeping] isp: " + e.atmosphereCurve.Evaluate(0));
 					if (e.atmosphereCurve.Evaluate (0) > isp){
 						Engine = e;
 						isp = e.atmosphereCurve.Evaluate (0);
@@ -170,7 +173,7 @@ namespace StationKeeping
 			}
 
 			if (isp < 0){
-				ScreenMessages.PostScreenMessage ("Cannot set station: " + v.name + " has no usable engines.");
+				ScreenMessages.PostScreenMessage ("Cannot set station: " + v.vesselName + " has no usable engines.");
 				return false;
 			}
 
@@ -186,7 +189,7 @@ namespace StationKeeping
 				else
 					RequiredUnits = f.ratio / PartResourceLibrary.Instance.GetDefinition (f.name.GetHashCode ()).density;
 
-				ScreenMessages.PostScreenMessage (v.name + " using " + RequiredUnits.ToString("F2") + " " + f.name);
+				ScreenMessages.PostScreenMessage (v.vesselName + " using " + RequiredUnits.ToString("F2") + " " + f.name + ".");
 
 				foreach (ProtoPartSnapshot pp in v.protoVessel.protoPartSnapshots) {
 					foreach (ProtoPartResourceSnapshot r in pp.resources) {
@@ -202,7 +205,7 @@ namespace StationKeeping
 				}
 			}
 			if(InsufficientFuel){ // 2 is probably overkill to avoid floating-point errors
-				ScreenMessages.PostScreenMessage ("Cannot set station: " + v.name + " has insufficient fuel.");
+				ScreenMessages.PostScreenMessage ("Cannot set station: " + v.vesselName + " has insufficient fuel.");
 				return false;
 			}
 
