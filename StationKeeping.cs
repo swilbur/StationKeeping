@@ -20,7 +20,7 @@ namespace StationKeeping
 		bool RealSMA;
 		double Tolerance;
 		double CurrentSMA;
-		double CurrentBodySyncronous;
+		double CurrentBodySynchronous;
 		string TargetString;
 		int Exponent;
 		double TargetSMA;
@@ -33,7 +33,7 @@ namespace StationKeeping
 		public void Start(){
 			v = null;
 			CurrentSMA = -1e6;
-			CurrentBodySyncronous = -1e6;
+			CurrentBodySynchronous = -1e6;
 			TargetString = "0";
 			Exponent = 6;
 
@@ -74,10 +74,10 @@ namespace StationKeeping
 			v = mapObject.vessel;
 			CurrentSMA = v.orbit.semiMajorAxis;
 			CelestialBody c = mapObject.vessel.mainBody;
-			CurrentBodySyncronous = Math.Pow(Math.Sqrt(c.gravParameter) / c.angularV, 2.0/3.0);
+			CurrentBodySynchronous = Math.Pow(Math.Sqrt(c.gravParameter) / c.angularV, 2.0/3.0);
 			if (!RealSMA) {
 				CurrentSMA -= c.Radius;
-				CurrentBodySyncronous -= c.Radius;
+				CurrentBodySynchronous -= c.Radius;
 			}
 		}
 
@@ -255,14 +255,14 @@ namespace StationKeeping
 
 			GUILayout.BeginHorizontal ();
 			GUILayout.Label ("Sync: ");
-			if(CurrentBodySyncronous>0)
-				GUILayout.Label(FormatLength(CurrentBodySyncronous));
+			if(CurrentBodySynchronous>0)
+				GUILayout.Label(FormatLength(CurrentBodySynchronous));
 			else
 				GUILayout.Label("N/A");
-			if(CurrentBodySyncronous < 0 || !CheckSMA(CurrentSMA, CurrentBodySyncronous))
+			if(CurrentBodySynchronous < 0 || !CheckSMA(CurrentSMA, CurrentBodySynchronous))
 				GUI.enabled = false;
 			if (GUILayout.Button ("Set Sync", GUILayout.ExpandWidth(false))) {
-				SetSMA(CurrentBodySyncronous);
+				SetSMA(CurrentBodySynchronous);
 			}
 			GUI.enabled = true;
 			GUILayout.EndHorizontal();
