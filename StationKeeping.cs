@@ -187,7 +187,7 @@ namespace StationKeeping
 				if (!f.ignoreForIsp)
 					RequiredUnits = f.ratio / Engine.ratioSum * FuelMass / PartResourceLibrary.Instance.GetDefinition (f.name.GetHashCode ()).density;
 				else
-					RequiredUnits = f.ratio / PartResourceLibrary.Instance.GetDefinition (f.name.GetHashCode ()).density;
+					RequiredUnits = f.ratio / Engine.ratioSum * FuelMass;
 
 				ScreenMessages.PostScreenMessage (v.vesselName + " using " + RequiredUnits.ToString("F2") + " " + f.name + ".");
 
