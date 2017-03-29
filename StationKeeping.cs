@@ -184,10 +184,8 @@ namespace StationKeeping
 			bool InsufficientFuel = false;
 			foreach (Propellant f in Fuels) {
 				double RequiredUnits = 0;
-				if (!f.ignoreForIsp)
-					RequiredUnits = f.ratio / Engine.ratioSum * FuelMass / PartResourceLibrary.Instance.GetDefinition (f.name.GetHashCode ()).density;
-				else
-					RequiredUnits = f.ratio / Engine.ratioSum * FuelMass;
+				//double density = PartResourceLibrary.Instance.GetDefinition (f.name.GetHashCode ()).density;
+				RequiredUnits = f.ratio * FuelMass / Engine.mixtureDensity;
 
 				ScreenMessages.PostScreenMessage (v.vesselName + " using " + RequiredUnits.ToString("F2") + " " + f.name + ".");
 
@@ -204,7 +202,7 @@ namespace StationKeeping
 					InsufficientFuel = true;
 				}
 			}
-			if(InsufficientFuel){ // 2 is probably overkill to avoid floating-point errors
+			if(InsufficientFuel){
 				ScreenMessages.PostScreenMessage ("Cannot set station: " + v.vesselName + " has insufficient fuel.");
 				return false;
 			}
